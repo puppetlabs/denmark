@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+require 'gli'
+require 'denmark'
+require 'denmark/version'
+
+class Denmark
+  extend GLI::App
+
+  program_desc 'A simple tool for checking Puppet Forge modules for maintenance smells'
+  version      Denmark::VERSION
+
+  pre do |global, command, options, args|
+    Denmark.config = YAML.load_file("#{Dir.home}/.config/denmark.yaml") rescue {}
+  end
+
+  desc 'Verbose output'
+  switch [:verbose, :v]
+
+  desc 'List all available tests'
+  command :list do |c|
+    c.action do |global, options, args|
+      Denmark.list(options)
+    end
+  end
+
+  desc 'Show info about a module'
+  command :info do |c|
+    c.action do |global, options, args|
+      Denmark.info args[0]
+    end
+  end
+
+  desc 'Smell test a module using all enabled tests'
+  command :smell do |c|
+    c.desc 'Lists of tests to enable'
+    c.flag [:enable, :e], :type => Array
+
+    c.desc 'List of tests to omit'
+    c.flag [:disable, :d], :type => Array
+
+    c.desc 'The output format to use'
+    c.flag [:format], :default_value => 'human'
+
+    c.desc 'Include alert details'
+    c.switch [:detail, :D]
+
+    c.action do |global, options, args|
+      Denmark.evaluate(args.first, options)
+    end
+  end
+
+  desc "Commands useful for developers"
+  command :dev do |t|
+    t.desc 'Open a Pry shell for debugging'
+    t.command :shell do |c|
+      c.action do |global, options, args|
+        require 'pry'
+        binding.pry
+      end
+    end
+
+  end
+
+end
+
+exit Denmark.run(ARGV)
