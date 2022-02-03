@@ -70,54 +70,5 @@ class Denmark
     end
   end
 
-
-  def self.info(slug)
-    mod = PuppetForge::Module.find(slug)
-
-    puts mod.owner.username
-    puts mod.owner.display_name
-    puts mod.current_release.version
-    puts mod.current_release.created_at
-    puts mod.current_release.changelog
-    puts mod.current_release.reference
-    puts mod.current_release.license
-    puts mod.homepage_url
-    puts mod.current_release.metadata['project_page']
-    puts mod.current_release.metadata['source']
-    puts mod.issues_url
-
-    client = Octokit::Client.new
-    repo   = Octokit::Repository.from_url(mod.homepage_url, options)
-
-require 'pry'
-binding.pry
-
-    puts client.pull_requests(repo)
-    puts client.list_issues(repo)
-  end
-
-
-  def github_client
-    @token ||= ENV['GITHUB_TOKEN'] || `git config --global github.token`.chomp
-
-    if @token.empty?
-      puts "You need to generate a GitHub token:"
-      puts "\t * https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line"
-      puts "\t * git config --global github.token <token>"
-      puts
-      puts "Export that as the `GITHUB_TOKEN` environment variable or put it in your ~/.gitconfig."
-      exit 1
-    end
-
-    begin
-      client = Octokit::Client.new(:access_token => @token)
-    rescue => e
-      puts "Github login error: #{e.message}"
-      exit 1
-    end
-
-    client
-  end
-
 end
 
