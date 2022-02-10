@@ -35,7 +35,7 @@ class Denmark::Plugins::Metadata
       }
     end
 
-    if version != repo_metadata[:version]
+    if version != repo_metadata['version']
       response << {
         severity: :red,
         message: "The version released on the Forge does not match the version in the repository.",
@@ -51,7 +51,7 @@ class Denmark::Plugins::Metadata
       }
     end
 
-    if version != latest_tag
+    unless [version, "v#{version}"].include? latest_tag
       response << {
         severity: :yellow,
         message: "The version released on the Forge does not match the latest tag in the repo.",
@@ -71,7 +71,7 @@ class Denmark::Plugins::Metadata
       response << {
         severity: :green,
         message: "There was a gap of at least a year between the last two releases.",
-        explanation: "A large gap between releases often shows sporadic maintenance. This is not always bad.",
+        explanation: "A large gap between releases often shows sporadic maintenance. This doesn't necessarily indicate anything wrong, but attackers do sometimes target stagnant projects in the hope that they'll be undetected for a longer time period.",
       }
     end
 
