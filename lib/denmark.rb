@@ -31,7 +31,8 @@ class Denmark
 
   def self.evaluate(slug, options)
     @options = options
-    slug.sub!('/', '-')
+    slug = resolve_slug(slug)
+
     begin
       mod = PuppetForge::Module.find(slug)
     rescue Faraday::BadRequestError, Faraday::ResourceNotFound
@@ -49,6 +50,23 @@ class Denmark
     else
       raise 'unknown format'
     end
+  end
+
+  def self.resolve_slug(path)
+    begin
+      if path.nil?
+        path = JSON.parse(File.read('metadata.json'))['name']
+      elsif File.directory?(path)
+        path = JSON.parse(File.read("#{path}/metadata.json"))['name']
+      elsif path.end_with?('metadata.json')
+        path = JSON.parse(File.read(path))['name']
+      end
+    rescue Errno::ENOENT => e
+      raise "Cannot load metadata from '#{path}'. Pass this tool the name of a module, or the local path to a module."
+    end
+
+    # if we get this far, assume it's the name of a module and normalize it
+    path.sub('/', '-')
   end
 
   def self.generate_report(data)
