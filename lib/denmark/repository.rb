@@ -54,6 +54,27 @@ class Denmark::Repository
     end
   end
 
+  def issues_since_tag(tag = nil)
+    tag ||= tags[0]
+    case @flavor
+    when :github
+      issues_since(commit_date(tag.commit.sha))
+    when :gitlab
+      issues_since(tag.commit.created_at)
+    end
+  end
+
+  def issues_since(date)
+    case @flavor
+    when :github
+      @client.issues(@repo, {:state => 'open', :since=> date}).reject {|i| i[:pull_request] }
+    when :gitlab
+      @client.issues(@repo, updated_after: date)
+    else
+      Array.new
+    end
+  end
+
   def tags
     case @flavor
     when :github, :gitlab
@@ -101,8 +122,6 @@ class Denmark::Repository
     else
       Array.new
     end
-
-
   end
 
   def commits_since_tag(tag = nil)
@@ -110,7 +129,7 @@ class Denmark::Repository
 
     case @flavor
     when :github
-      @client.commits_since(@repo, tag.commit.committer.date)
+      @client.commits_since(@repo, commit_date(tag.commit.sha))
     when :gitlab
       @client.commits(@repo, since: tag.commit.created_at)
     else
