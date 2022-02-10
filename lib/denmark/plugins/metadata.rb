@@ -29,9 +29,17 @@ class Denmark::Plugins::Metadata
 
     if (Date.today - release_date) > 365
       response << {
-        severity: :yellow,
+        severity: :green,
         message: "The most current module release is more than a year old.",
-        explanation: "Sometimes when issues are not responded to, it means that the project is no longer being maintained. You might consider contacting the maintainer to determine the status of the project.",
+        explanation: "Sometimes a module not seeing regular updates is a sign that it's no longer being maintained. You might consider contacting the maintainer to determine the status of the project.",
+      }
+    end
+
+    if (Date.today - release_date) < 15
+      response << {
+        severity: :green,
+        message: "The latest module release is less than two weeks old.",
+        explanation: "Sometimes it's a good idea to let the early adopters shake out the bugs with a new release.",
       }
     end
 
