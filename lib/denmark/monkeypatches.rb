@@ -3,6 +3,7 @@
 class Array
   def percent_of(digits = nil)
     raise "Select the items you want to count using a block that returns a boolean" unless block_given?
+    return 0 if self.empty?
 
     count = self.size
     match = 0
