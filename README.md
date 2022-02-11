@@ -6,9 +6,12 @@
 I'm sure you've had the experience of evaluating modules on the Puppet Forge. Maybe
 you were comparing a handful that all claimed to meet your needs, or maybe you were
 just determining whether a specific module met your standards for deploying into
-your production environment.
+your production environment. With tools like `puppet-lint` and the PDK, it's fairly
+straightforward to evaluate code quality. But what about the health of the project
+itself? Is it actively maintained? Are Forge releases kept up to date? What are the
+chances that the latest release was compromised with a hidden bitcoin miner?
 
-How did you go about it? You probably
+How do you answer those sorts of questions? You probably
 
 * Skimmed the module's README for signs of the author's diligence.
 * Poked through the issue list and pull requests on the repository hosting the module

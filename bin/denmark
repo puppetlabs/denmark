@@ -6,8 +6,9 @@ require 'denmark/version'
 class Denmark
   extend GLI::App
 
-  program_desc 'A simple tool for checking Puppet Forge modules for maintenance smells'
-  version      Denmark::VERSION
+  program_desc   'A simple tool for checking Puppet Forge modules for maintenance smells'
+  version        Denmark::VERSION
+  wrap_help_text :verbatim
 
   pre do |global, command, options, args|
     Denmark.config = YAML.load_file("#{Dir.home}/.config/denmark.yaml") rescue {}
@@ -30,8 +31,18 @@ class Denmark
     end
   end
 
-  desc 'Smell test a module using all enabled tests'
-  command :smell do |c|
+  desc 'Smell test a module using all enabled tests.'
+  long_desc <<~DESC
+    Pass this command the name of a module, the path to a module or its
+    `metadata.json`, or simply execute it within the root directory of a module.
+
+    Examples:
+      $ denmark binford2k-node_encrypt
+      $ denmark /Users/ben/Projects/binford2k-node_encrypt
+      $ denmark /Users/ben/Projects/binford2k-node_encrypt/metadata.json
+      $ cd Projects/binford2k-node_encrypt && denmark
+  DESC
+  command [:smell,:check] do |c|
     c.desc 'Lists of tests to enable'
     c.flag [:enable, :e], :type => Array
 
