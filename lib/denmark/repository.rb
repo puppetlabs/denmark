@@ -61,6 +61,8 @@ class Denmark::Repository
       issues_since(commit_date(tag.commit.sha))
     when :gitlab
       issues_since(tag.commit.created_at)
+    else
+      Array.new
     end
   end
 
@@ -70,6 +72,22 @@ class Denmark::Repository
       @client.issues(@repo, {:state => 'open', :since=> date}).reject {|i| i[:pull_request] }
     when :gitlab
       @client.issues(@repo, updated_after: date, scope: 'all')
+    else
+      Array.new
+    end
+  end
+
+  def committers(list)
+    list = Array(list)
+    case @flavor
+    when :github
+      list.reduce(Array.new) do |acc, item|
+        acc << (item.author&.login || commit(item.commit.sha).author.login)
+      end
+    when :gitlab
+      list.reduce(Array.new) do |acc, item|
+        acc << item.commit.author_name
+      end
     else
       Array.new
     end
@@ -93,6 +111,22 @@ class Denmark::Repository
     else
       ''
     end
+  end
+
+  def verified(item)
+    case @flavor
+    when :github
+      if item.commit.verification.nil?
+        commit(item.commit.sha).commit.verification.verified
+      else
+        item.commit.verification&.verified
+      end
+    when :gitlab
+      commit(tag.commit.id).verification.verification_status == 'verified'
+    else
+      false
+    end
+
   end
 
   def commit(sha)
@@ -120,7 +154,7 @@ class Denmark::Repository
     when :gitlab
       @client.commit(@repo, sha).commit.created_at.to_date
     else
-      Array.new
+      nil
     end
   end
 

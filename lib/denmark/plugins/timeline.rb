@@ -16,15 +16,13 @@ class Denmark::Plugins::Timeline
     # return an array of hashes representing any smells discovered
     response = Array.new
 
-    unreleased = repo.commits_since_tag.size
-    new_issues = repo.issues_since_tag.size
-
-    # This almost certainly doesn't work on GitLab. Should it be part of the repo abstraction?
-    taggers = repo.tags.reduce(Array.new) do |acc, tag|
-      acc << repo.commit(tag.commit.sha).committer.login
-    end
+    unreleased  = repo.commits_since_tag.size
+    new_issues  = repo.issues_since_tag.size
+    taggers     = repo.committers(repo.tags)
     last_tagger = taggers.shift
-    verified    = repo.commit(repo.tags.first.commit.sha).commit.verification.verified
+
+    unsigned_commits = repo.commits.percent_of {|i| not repo.verified(i) }
+    unsigned_tags = repo.tags.percent_of {|i| not repo.verified(i) }
 
     unless taggers.include? last_tagger
       response << {
@@ -34,11 +32,37 @@ class Denmark::Plugins::Timeline
       }
     end
 
-    unless verified
+    unless repo.verified(repo.tags.first)
       response << {
         severity: :yellow,
         message: "The last tag was not verified.",
         explanation: "Many authors don't bother to sign their tags. This means you have no way to ensure who creates them.",
+      }
+    end
+
+    # this smell would be more accurate if we weighted more recent commits
+    if (25..75).include? unsigned_commits
+      response << {
+        severity: :green,
+        message: "#{unsigned_commits}% of the commits in this repo are not signed.",
+        explanation: "The repository is using signed commits, but some of the contributions are unverified.",
+      }
+    end
+
+    # this smell would be more accurate if we weighted more recent tags
+    if (15..85).include? unsigned_tags
+      response << {
+        severity: :green,
+        message: "#{unsigned_tags}% of the tags in this repo are not signed.",
+        explanation: "The repository is using signed tags, but a significant number are unverified.",
+      }
+    end
+
+    if unsigned_tags > 85 and not repo.verified(repo.tags.first)
+      response << {
+        severity: :red,
+        message: "Most tags in this repo are signed, but not the latest one.",
+        explanation: "At best, this means a sloppy release. But it could also mean a compromised release.",
       }
     end
 
