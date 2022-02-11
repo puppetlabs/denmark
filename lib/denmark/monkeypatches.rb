@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'paint'
+require 'paint/shortcuts'
 
 class Array
   def percent_of(digits = nil)
@@ -18,3 +20,11 @@ class Array
     end
   end
 end
+
+Paint::SHORTCUTS[:color] = {
+  :red    => Paint.color(:red),
+  :orange => Paint.color('orange', :bright),
+  :yellow => Paint.color(:yellow),
+  :green  => Paint.color(:green),
+}
+include Paint::Color::Prefix::ColorName

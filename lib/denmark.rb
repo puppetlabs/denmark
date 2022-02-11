@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'json'
-require 'colorize'
 require 'httpclient'
 require 'puppet_forge'
 require 'denmark/plugins'
@@ -78,7 +77,7 @@ class Denmark
         alerts = data.select {|i| i[:severity] == severity}
         next unless alerts.size > 0
 
-        puts "[#{severity.upcase}] alerts:".colorize(severity)
+        puts "[#{severity.upcase}] alerts:".color_name(severity)
         alerts.each do |alert|
           puts "  #{alert[:message]}"
           puts "    > #{alert[:explanation]}" if @options[:detail]
