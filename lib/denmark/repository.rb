@@ -69,7 +69,7 @@ class Denmark::Repository
     when :github
       @client.issues(@repo, {:state => 'open', :since=> date}).reject {|i| i[:pull_request] }
     when :gitlab
-      @client.issues(@repo, updated_after: date)
+      @client.issues(@repo, updated_after: date, scope: 'all')
     else
       Array.new
     end
