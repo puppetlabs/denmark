@@ -19,6 +19,29 @@ class Denmark::Plugins::Timeline
     unreleased = repo.commits_since_tag.size
     new_issues = repo.issues_since_tag.size
 
+    # This almost certainly doesn't work on GitLab. Should it be part of the repo abstraction?
+    taggers = repo.tags.reduce(Array.new) do |acc, tag|
+      acc << repo.commit(tag.commit.sha).committer.login
+    end
+    last_tagger = taggers.shift
+    verified    = repo.commit(repo.tags.first.commit.sha).commit.verification.verified
+
+    unless taggers.include? last_tagger
+      response << {
+        severity: :yellow,
+        message: "The last tag was pushed by #{last_tagger}, who has not tagged any other release.",
+        explanation: "This often indicates that a project has recently changed owners. Check to ensure you still know who's maintaining the project.",
+      }
+    end
+
+    unless verified
+      response << {
+        severity: :yellow,
+        message: "The last tag was not verified.",
+        explanation: "Many authors don't bother to sign their tags. This means you have no way to ensure who creates them.",
+      }
+    end
+
     if unreleased > 10
       response << {
         severity: :yellow,
