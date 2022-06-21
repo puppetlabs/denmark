@@ -104,7 +104,7 @@ Start by copying the skeleton file below into a new plugin source file. This
 should be a Ruby file that lives in `lib/denmark/plugins/` and defines a single
 class named after its filename. For example, if you wanted to write a plugin to
 analyze the readability of the README file, you might create the class
-`Dropsonde::Metrics::Readme` in the Ruby file named `lib/denmark/plugins/readme.rb`.
+`Denmark::Metrics::Readme` in the Ruby file named `lib/denmark/plugins/readme.rb`.
 
 Hooks are defined as a series of class methods and each of them is documented
 below. Flesh each method out as needed.
@@ -152,7 +152,7 @@ return an array, even if it's empty. It should look like so:
 #### Severity levels
 
 * `:red`: The most severe level. This is almost certainly a problem and must be investigated.
-* `:orage`
+* `:orange`
 * `:yellow`
 * `:green`: The least severe level. Mostly informational, but you should know about it.
 
