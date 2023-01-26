@@ -82,7 +82,7 @@ class Denmark::Repository
     case @flavor
     when :github
       list.reduce(Array.new) do |acc, item|
-        acc << (item.author&.login || commit(item.commit.sha).author.login)
+        acc << (item.author&.login || commit(item.commit.sha).author&.login)
       end
     when :gitlab
       list.reduce(Array.new) do |acc, item|
