@@ -43,11 +43,11 @@ class Denmark::Plugins::Metadata
       }
     end
 
-    if version != repo_metadata['version']
+    if SemanticPuppet::Version.parse(version) > SemanticPuppet::Version.parse(repo_metadata['version'])
       response << {
         severity: :red,
-        message: "The version released on the Forge does not match the version in the repository.",
-        explanation: "Validate that the Forge release is not compromised and is the latest released version.",
+        message: "The version released on the Forge is greater than the version in the repository.",
+        explanation: "Forge version numbers cannot be reused, so an attacker might increment the version of a pushed module to induce you to update to their compromised version. Validate that the Forge module represents the latest released version from the repository.",
       }
     end
 
