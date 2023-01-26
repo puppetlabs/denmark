@@ -11,7 +11,13 @@ class Denmark
   wrap_help_text :verbatim
 
   pre do |global, command, options, args|
-    Denmark.config = YAML.load_file("#{Dir.home}/.config/denmark.yaml") rescue {}
+    begin
+      Denmark.config = YAML.load_file("#{Dir.home}/.config/denmark.yaml")
+    rescue
+      puts 'info: Your config file is missing or malformed, which may cause you to be rate-limited.'
+      puts 'info: See https://github.com/binford2k/denmark#configuration for information.'
+    end
+    true
   end
 
   desc 'Verbose output'
@@ -37,10 +43,10 @@ class Denmark
     `metadata.json`, or simply execute it within the root directory of a module.
 
     Examples:
-      $ denmark binford2k-node_encrypt
-      $ denmark /Users/ben/Projects/binford2k-node_encrypt
-      $ denmark /Users/ben/Projects/binford2k-node_encrypt/metadata.json
-      $ cd Projects/binford2k-node_encrypt && denmark
+      $ denmark smell binford2k-node_encrypt
+      $ denmark smell /Users/ben/Projects/binford2k-node_encrypt
+      $ denmark smell /Users/ben/Projects/binford2k-node_encrypt/metadata.json
+      $ cd Projects/binford2k-node_encrypt && denmark smell
   DESC
   command [:smell,:check] do |c|
     c.desc 'Lists of tests to enable'

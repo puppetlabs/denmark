@@ -82,7 +82,7 @@ class Denmark::Repository
     case @flavor
     when :github
       list.reduce(Array.new) do |acc, item|
-        acc << (item.author&.login || commit(item.commit.sha).author.login)
+        acc << (item.author&.login || commit(item.commit.sha).author&.login)
       end
     when :gitlab
       list.reduce(Array.new) do |acc, item|
@@ -105,11 +105,15 @@ class Denmark::Repository
   def file_content(path)
     case @flavor
     when :github
-      Base64.decode64(client.contents(@repo, :path => path).content) rescue nil
+      begin
+        Base64.decode64(client.contents(@repo, :path => path).content)
+      rescue Octokit::NotFound
+        nil
+      end
     when :gitlab
       client.file_contents(@repo, path)
     else
-      ''
+      nil
     end
   end
 
