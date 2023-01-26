@@ -105,11 +105,15 @@ class Denmark::Repository
   def file_content(path)
     case @flavor
     when :github
-      Base64.decode64(client.contents(@repo, :path => path).content) rescue nil
+      begin
+        Base64.decode64(client.contents(@repo, :path => path).content)
+      rescue Octokit::NotFound
+        nil
+      end
     when :gitlab
       client.file_contents(@repo, path)
     else
-      ''
+      nil
     end
   end
 
