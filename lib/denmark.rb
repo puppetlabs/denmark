@@ -3,12 +3,15 @@
 require 'json'
 require 'httpclient'
 require 'puppet_forge'
-require 'denmark/plugins'
-require 'denmark/repository'
-require 'denmark/monkeypatches'
 
 class Denmark
+  require 'denmark/plugins'
+  require 'denmark/repository'
+  require 'denmark/monkeypatches'
+  require 'denmark/version'
+
   PuppetForge.user_agent = "Denmark Module Smell Checker/#{Denmark::VERSION}"
+  @config = {}
 
   def self.config=(arg)
     raise "Requires a Hash to set config, not a #{arg.class}" unless arg.is_a? Hash
