@@ -43,7 +43,10 @@ class Denmark::Plugins::Metadata
       }
     end
 
-    if SemanticPuppet::Version.parse(version) > SemanticPuppet::Version.parse(repo_metadata['version'])
+    unless (
+        [version, "v#{version}"].include? latest_tag) or
+        (SemanticPuppet::Version.parse(version) <= SemanticPuppet::Version.parse(repo_metadata['version'])
+      )
       response << {
         severity: :red,
         message: "The version released on the Forge is greater than the version in the repository.",
