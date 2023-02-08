@@ -28,7 +28,7 @@ class Denmark::Plugins::Metadata
     version      = mod.releases.first.version
     changelog    = mod.releases.first.changelog
 
-    repo_metadata   = JSON.parse(repo.file_content('metadata.json') || '{}')
+    repo_metadata   = JSON.parse(repo.file_content('metadata.json') || '{"version":"0.0.0"}')
     repo_changelog  = repo.file_content('CHANGELOG.md') || repo.file_content('CHANGELOG')
     latest_tag      = repo.tags.first.name
     latest_tag_date = repo.commit_date(repo.tags.first.commit.sha)
