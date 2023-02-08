@@ -30,8 +30,12 @@ class Denmark::Plugins::Metadata
 
     repo_metadata   = JSON.parse(repo.file_content('metadata.json') || '{}')
     repo_changelog  = repo.file_content('CHANGELOG.md') || repo.file_content('CHANGELOG')
-    latest_tag      = repo.tags.first.name
-    latest_tag_date = repo.commit_date(repo.tags.first.commit.sha)
+    latest_tag      = repo.tags.first&.name
+    latest_tag_date = if latest_tag
+                        repo.commit_date(repo.tags.first.commit.sha)
+                      else
+                        nil
+                      end
 
     if (Date.today - release_date) > 365
       response << {
