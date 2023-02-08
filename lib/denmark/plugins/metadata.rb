@@ -60,7 +60,7 @@ class Denmark::Plugins::Metadata
       }
     end
 
-    if changelog != repo_changelog
+    if !changelog.nil? && changelog != repo_changelog
       response << {
         severity: :green,
         message: "The module changelog on the Forge does not match what's in the repository.",

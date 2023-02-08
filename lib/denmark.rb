@@ -34,7 +34,7 @@ class Denmark
     @options = options
     slug = resolve_slug(slug)
 
-    project = Denmark::Project.new(slug, 'puppet')
+    project = Denmark::Project.new(slug, options[:type])
 
     repo = Denmark::Repository.new(project.homepage_url)
     data = Denmark::Plugins.new(options).run(project, repo)
