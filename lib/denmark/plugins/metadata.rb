@@ -84,7 +84,7 @@ class Denmark::Plugins::Metadata
       }
     end
 
-    if (release_date - prev_release) > 365
+    if !prev_release.nil? && (release_date - prev_release) > 365
       response << {
         severity: :green,
         message: "There was a gap of at least a year between the last two releases.",
