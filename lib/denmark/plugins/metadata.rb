@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'semantic_puppet'
+
 # environments plugin
 class Denmark::Plugins::Metadata
   def self.description
