@@ -2,15 +2,14 @@
 
 require 'json'
 require 'httpclient'
-require 'puppet_forge'
 
 class Denmark
   require 'denmark/plugins'
+  require 'denmark/project'
   require 'denmark/repository'
   require 'denmark/monkeypatches'
   require 'denmark/version'
 
-  PuppetForge.user_agent = "Denmark Module Smell Checker/#{Denmark::VERSION}"
   @config = {}
 
   def self.config=(arg)
@@ -35,14 +34,10 @@ class Denmark
     @options = options
     slug = resolve_slug(slug)
 
-    begin
-      mod = PuppetForge::Module.find(slug)
-    rescue Faraday::BadRequestError, Faraday::ResourceNotFound
-      raise "The module `#{slug}` was not found on the Puppet Forge."
-    end
+    project = Denmark::Project.new(slug, 'puppet')
 
-    repo = Denmark::Repository.new(mod.homepage_url)
-    data = Denmark::Plugins.new(options).run(mod, repo)
+    repo = Denmark::Repository.new(project.homepage_url)
+    data = Denmark::Plugins.new(options).run(project, repo)
 
     case options[:format]
     when 'json'
