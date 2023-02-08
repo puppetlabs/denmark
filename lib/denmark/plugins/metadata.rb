@@ -18,7 +18,11 @@ class Denmark::Plugins::Metadata
     response = Array.new
 
     release_date = Date.parse(mod.releases.first.updated_at).to_date
-    prev_release = Date.parse(mod.releases[1].updated_at).to_date
+    prev_release = unless mod.releases[1].nil?
+                     Date.parse(mod.releases[1].updated_at).to_date
+                   else
+                     nil
+                   end
     version      = mod.releases.first.version
     changelog    = mod.releases.first.changelog
 
