@@ -42,6 +42,9 @@ class Denmark::Project
         wrapped_versions << GemReleaseWrapper.new(version)
       end
       @wrapper = {'info': info, 'versions': wrapped_versions}
+    when 'python'
+      require 'denmark/pypi'
+      @wrapper = Denmark::Pypi.new(name)
     else
       raise "Unsupported project type: '#{@type}'"
     end
@@ -54,12 +57,14 @@ class Denmark::Project
       @wrapper.homepage_url
     when 'gem'
       @wrapper[:info]['source_code_uri'] || @wrapper[:info]['homepage_uri']
+    when 'python'
+      @wrapper.scm_url
     end
   end
 
   def releases
     case @type
-    when 'puppet'
+    when 'puppet', 'python'
       @wrapper.releases
     when 'gem'
       @wrapper[:versions]
