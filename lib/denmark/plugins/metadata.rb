@@ -28,10 +28,14 @@ class Denmark::Plugins::Metadata
     version      = mod.releases.first.version
     changelog    = mod.releases.first.changelog
 
-    repo_metadata   = JSON.parse(repo.file_content('metadata.json') || '{}')
+    repo_metadata   = JSON.parse(repo.file_content('metadata.json') || '{"version":"0.0.0"}')
     repo_changelog  = repo.file_content('CHANGELOG.md') || repo.file_content('CHANGELOG')
-    latest_tag      = repo.tags.first.name
-    latest_tag_date = repo.commit_date(repo.tags.first.commit.sha)
+    latest_tag      = repo.tags.first&.name
+    latest_tag_date = if latest_tag
+                        repo.commit_date(repo.tags.first.commit.sha)
+                      else
+                        nil
+                      end
 
     if (Date.today - release_date) > 365
       response << {
@@ -60,7 +64,7 @@ class Denmark::Plugins::Metadata
       }
     end
 
-    if changelog != repo_changelog
+    if !changelog.nil? && changelog != repo_changelog
       response << {
         severity: :green,
         message: "The module changelog on the Forge does not match what's in the repository.",
@@ -84,7 +88,7 @@ class Denmark::Plugins::Metadata
       }
     end
 
-    if (release_date - prev_release) > 365
+    if !prev_release.nil? && (release_date - prev_release) > 365
       response << {
         severity: :green,
         message: "There was a gap of at least a year between the last two releases.",

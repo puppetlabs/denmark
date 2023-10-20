@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency      "gitlab",           '~> 4.0'
   s.add_dependency      "paint",            '~> 2.0'
   s.add_dependency      "paint-shortcuts",  '~> 2.0'
+  s.add_dependency      'gems',             '~> 1.0'
 
   s.description       = <<~desc
   Denmark will check a Puppet module for things you should be concerned about, like signs of an

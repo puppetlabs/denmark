@@ -61,6 +61,9 @@ class Denmark
     c.desc 'Include alert details'
     c.switch [:detail, :D]
 
+    c.desc 'Type of project to check'
+    c.flag [:type], :default_value => 'puppet'
+
     c.action do |global, options, args|
       Denmark.evaluate(args.first, options)
     end
