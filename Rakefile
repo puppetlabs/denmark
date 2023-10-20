@@ -1,10 +1,12 @@
-$:.unshift File.expand_path("../lib", __FILE__)
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift File.expand_path('lib', __dir__)
 require 'denmark/version'
 require 'bundler/gem_tasks'
 require 'github_changelog_generator/task'
 
 task :default do
-  system("rake -T")
+  system('rake -T')
 end
 
 GitHubChangelogGenerator::RakeTask.new :changelog do |config|
