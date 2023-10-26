@@ -15,8 +15,10 @@ class Denmark
 
   def self.config=(arg)
     raise "Requires a Hash to set config, not a #{arg.class}" unless arg.is_a? Hash
+
     @config = arg
   end
+
   def self.config(*args)
     if args.empty?
       @config
@@ -24,7 +26,6 @@ class Denmark
       @config.dig(*args)
     end
   end
-
 
   def self.list(options)
     puts
@@ -63,7 +64,7 @@ class Denmark
       elsif path.end_with?('metadata.json')
         path = JSON.parse(File.read(path))['name']
       end
-    rescue Errno::ENOENT => e
+    rescue Errno::ENOENT
       raise "Cannot load metadata from '#{path}'. Pass this tool the name of a module, or the local path to a module."
     end
 
@@ -73,12 +74,12 @@ class Denmark
 
   def self.generate_report(data)
     if data.empty?
-      puts "Congrats, no smells discovered"
+      puts 'Congrats, no smells discovered'
     else
       puts
       [:red, :orange, :yellow, :green].each do |severity|
-        alerts = data.select {|i| i[:severity] == severity}
-        next unless alerts.size > 0
+        alerts = data.select { |i| i[:severity] == severity }
+        next unless alerts.size.positive?
 
         puts "[#{severity.upcase}] alerts:".color_name(severity)
         alerts.each do |alert|
@@ -89,6 +90,4 @@ class Denmark
       end
     end
   end
-
 end
-

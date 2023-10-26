@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 require 'gli'
 require 'denmark'
 require 'denmark/version'
@@ -10,10 +12,10 @@ class Denmark
   version        Denmark::VERSION
   wrap_help_text :verbatim
 
-  pre do |global, command, options, args|
+  pre do |_global, _command, _options, _args|
     begin
       Denmark.config = YAML.load_file("#{Dir.home}/.config/denmark.yaml")
-    rescue
+    rescue StandardError
       puts 'info: Your config file is missing or malformed, which may cause you to be rate-limited.'
       puts 'info: See https://github.com/binford2k/denmark#configuration for information.'
     end
@@ -21,18 +23,18 @@ class Denmark
   end
 
   desc 'Verbose output'
-  switch [:verbose, :v]
+  switch %i[verbose v]
 
   desc 'List all available tests'
   command :list do |c|
-    c.action do |global, options, args|
+    c.action do |_global, options, _args|
       Denmark.list(options)
     end
   end
 
   desc 'Show info about a module'
   command :info do |c|
-    c.action do |global, options, args|
+    c.action do |_global, _options, args|
       Denmark.info args[0]
     end
   end
@@ -48,25 +50,25 @@ class Denmark
       $ denmark smell /Users/ben/Projects/binford2k-node_encrypt/metadata.json
       $ cd Projects/binford2k-node_encrypt && denmark smell
   DESC
-  command [:smell,:check] do |c|
+  command [:smell, :check] do |c|
     c.desc 'Lists of tests to enable'
-    c.flag [:enable, :e], :type => Array
+    c.flag %i[enable e], type: Array
 
     c.desc 'List of tests to omit'
-    c.flag [:disable, :d], :type => Array
+    c.flag %i[disable d], type: Array
 
     c.desc 'The output format to use'
-    c.flag [:format], :default_value => 'human'
+    c.flag [:format], default_value: 'human'
 
     c.desc 'Include alert details'
-    c.switch [:detail, :D]
+    c.switch %i[detail D]
 
-    c.action do |global, options, args|
+    c.action do |_global, options, args|
       Denmark.evaluate(args.first, options)
     end
   end
 
-  desc "Commands useful for developers"
+  desc 'Commands useful for developers'
   command :dev do |t|
     t.desc 'Open a Pry shell for debugging'
     t.command :shell do |c|
@@ -75,9 +77,7 @@ class Denmark
         binding.pry
       end
     end
-
   end
-
 end
 
 exit Denmark.run(ARGV)

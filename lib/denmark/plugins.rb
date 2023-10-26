@@ -9,7 +9,7 @@ class Denmark::Plugins
   def initialize(options)
     if options[:enable]
       disable = Denmark::Plugins.plugins.keys - options[:enable].map(&:to_sym)
-      options[:disable] ||= Array.new
+      options[:disable] ||= []
       options[:disable].concat disable
     end
     Denmark::Plugins.disregard_plugins(*options[:disable])
