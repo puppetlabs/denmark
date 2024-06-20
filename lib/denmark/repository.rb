@@ -54,6 +54,8 @@ class Denmark::Repository
 
   def issues_since_tag(tag = nil)
     tag ||= tags[0]
+    return Array.new unless tag
+
     case @flavor
     when :github
       issues_since(commit_date(tag.commit.sha))
@@ -114,6 +116,8 @@ class Denmark::Repository
   end
 
   def verified(item)
+    return false unless item
+
     case @flavor
     when :github
       if item.commit.verification.nil?
@@ -157,6 +161,7 @@ class Denmark::Repository
 
   def commits_since_tag(tag = nil)
     tag ||= tags[0]
+    return Array.new unless tag
 
     case @flavor
     when :github
